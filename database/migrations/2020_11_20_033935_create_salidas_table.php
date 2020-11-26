@@ -15,7 +15,7 @@ class CreateSalidasTable extends Migration
     {
         Schema::create('salidas', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('num_fac', 10);
+            $table->string('num_fac', 10)->unique();
             $table->dateTime('fecha_hora');
             $table->decimal('iva', 4, 2);
             $table->decimal('total', 11, 2);
