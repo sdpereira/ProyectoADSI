@@ -23,7 +23,7 @@
                                 <option value="nombre">Ciudad</option>
                             </select>
                                     <input type="text"  @keypress="listarCiudad(1,buscar,criterio);" v-model="buscar" class="form-control" placeholder="Buscar texto">
-                                    <button type="submit"  @click="listarCiudad(1,buscar,criterio);" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+                                    <button type="submit"  @click="listarCiudad(1,buscar,criterio);" class="btn btn-dark"><i class="fa fa-search"></i> Buscar</button>
                         </div>
                     </div>
                 </div>
@@ -65,7 +65,7 @@
     </div>
     <!--Inicio del modal agregar/actualizar-->
     <div class="modal fade" id="modalNuevo" :class="{ mostrar: modal }" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-primary modal-lg" role="document">
+        <div class="modal-dialog modal-dark modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" v-text="titulo"></h4>
@@ -97,8 +97,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" @click="cerrarModal" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                    <!-- <button v-show="accion == 0" type="button" @click="RegistrarCiudades" class="btn btn-primary">Guardar</button>-->
-                    <button v-show="accion" type="button" @click="actualizarCiudad" class="btn btn-primary">Actualizar</button> 
+                    <!-- <button v-show="accion == 0" type="button" @click="RegistrarCiudades" class="btn btn-dark">Guardar</button>-->
+                    <button v-show="accion" type="button" @click="actualizarCiudad" class="btn btn-dark">Actualizar</button> 
                 </div>
             </div>
             <!-- /.modal-content -->

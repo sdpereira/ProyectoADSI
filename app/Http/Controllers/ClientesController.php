@@ -20,7 +20,7 @@ class ClientesController extends Controller
             'clientes.direccion',
             'clientes.telefono',
             'clientes.email',
-               'ciudades.nombre as ciudad',
+            'ciudades.nombre as ciudad',
             ) 
             ->orderBy('nombre','asc')->paginate(2);
         } else {
@@ -87,6 +87,11 @@ class ClientesController extends Controller
         $clientes->email = $request->email;
         $clientes->id_ciudad = $request->id_ciudad; 
         $clientes->save();
+    }
+    public function destroy(Request $request)
+    {
+        $clientes = Clientes::findOrFail($request->id);
+        $clientes->delete();
     }
 }
 

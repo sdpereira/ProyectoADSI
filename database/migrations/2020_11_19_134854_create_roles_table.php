@@ -20,8 +20,8 @@ class CreateRolesTable extends Migration
             $table->boolean('condicion')->default(1);          
         });
         DB::table('roles')->insert(array('id'=>'1','nombre'=>'Administrador', 'descripcion'=>'Administradores de área'));
-        // DB::table('roles')->insert(array('id'=>'2','nombre'=>'Cliente', 'descripcion'=>'Cliente'));
-        DB::table('roles')->insert(array('id'=>'2','nombre'=>'Empleado', 'descripcion'=>'Empleado'));
+        DB::table('roles')->insert(array('id'=>'2','nombre'=>'Vendedor', 'descripcion'=>'Vendedor'));
+        DB::table('roles')->insert(array('id'=>'3','nombre'=>'Surtidor', 'descripcion'=>'Empleado'));
 
     
     }

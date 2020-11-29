@@ -143,4 +143,9 @@ class UserController extends Controller
         $user->condicion = '1';
         $user->save();
     }
+    public function destroy(Request $request)
+    {
+        $user = User::findOrFail($request->id);
+        $user->delete();
+    }
 }

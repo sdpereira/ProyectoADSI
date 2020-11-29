@@ -23,7 +23,7 @@
                                 <option value="nombre">Nombre</option>
                             </select>
                                 <input type="text" v-model="buscar" @keypress="listarCliente(1,buscar,criterio);" class="form-control" placeholder="Buscar texto">
-                                <button type="submit"  @click="listarCliente(1,buscar,criterio);" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+                                <button type="submit"  @click="listarCliente(1,buscar,criterio);" class="btn btn-dark"><i class="fa fa-search"></i> Buscar</button>
                         </div>
                     </div>
                 </div>
@@ -53,11 +53,14 @@
                                 <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" @click="abrirModal('editar', objeto)">
                                     <i class="icon-pencil"></i>
                                 </button> &nbsp;
+                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" @click="eliminarCliente(objeto)">
+                                    <i class="icon-trash"></i>
+                                </button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <nav>
+                <nav class="nav-dark">
                     <ul class="pagination justify-content-center">
                         <li class="page-item" v-if="pagination.current_page > 1">
                             <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar,criterio)">Ant</a>
@@ -76,7 +79,7 @@
     </div>
     <!--Inicio del modal agregar/actualizar-->
     <div class="modal fade" id="modalNuevo" :class="{ mostrar: modal }" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-primary modal-lg" role="document">
+        <div class="modal-dialog modal-dark modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" v-text="titulo"></h4>
@@ -90,10 +93,10 @@
                             <label class="col-md-2 form-control-label" for="text-input">Tipo de documento</label>
                                     <div class="col-md-9">
                                         <select v-model="tipo_documento" class="form-control">
-                                            <option value="CÉDULA DE CIUDADANÍA">CÉDULA DE CIUDADANÍA</option>
-                                            <option value="PASAPORTE">PASAPORTE</option>
-                                            <option value="TARJETA DE IDENTIDAD">TARJETA DE IDENTIDAD</option>
-                                            <option value="CÉDULA DE EXTRAJERÍA">CÉDULA DE EXTRAJERÍA</option>
+                                            <option value="Cédula de ciudadania">CÉDULA DE CIUDADANÍA</option>
+                                            <option value="Pasaporte">PASAPORTE</option>
+                                            <option value="Tarjeta de identidad">TARJETA DE IDENTIDAD</option>
+                                            <option value="Cedula de extrajería">CÉDULA DE EXTRAJERÍA</option>
                                         </select>                                        
                                     </div>
                             <label class="col-md-2 form-control-label" for="text-input">Número de documento</label>
@@ -142,16 +145,40 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" @click="cerrarModal" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                    <button v-show="accion == 0" type="button" @click="registrarCliente" class="btn btn-primary">Guardar </button>
-                    <button v-show="accion" type="button" @click="actualizarCliente" class="btn btn-primary">Actualizar</button>
+                    <button v-show="accion == 0" type="button" @click="registrarCliente" class="btn btn-dark">Guardar </button>
+                    <button v-show="accion" type="button" @click="actualizarCliente" class="btn btn-dark">Actualizar</button>
                 </div>
             </div>
             <!-- /.modal-content -->
         </div>
         <!-- /.modal-dialog -->
     </div>
-    <!--Fin del modal-->
-
+<!-- Inicio del modal Eliminar -->
+    <div class="modal fade" id="modalEliminar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: none" aria-hidden="true">
+        <div class="modal-dialog modal-danger" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Eliminar Cliente</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de eliminaar el registro?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Cerrar
+                    </button>
+                    <button type="button" @click="eliminarCliente" class="btn btn-danger">
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
     <!-- Fin del modal Eliminar -->
 </main>
 </template>
@@ -224,114 +251,151 @@ export default {
                     console.log(error);
                 })
         },
-            registrarCliente(){
-                if (this.validarCliente()){
-                    return;
-                }
-                
-                let me = this;
-                axios.post('/cliente/registrar',{
-                    'nombre': this.nombre,
-                    'tipo_documento': this.tipo_documento,
-                    'num_documento' : this.num_documento,
-                    'direccion' : this.direccion,
-                    'telefono' : this.telefono,
-                    'email' : this.email,
-                    'id_ciudad' : this.id_ciudad,
-                }).then(function (response) {
-                    me.cerrarModal();
-                    me.listarCliente(1,'','nombre');
-                    me.mensaje("¡Se registró correctamente!");
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            },
-            actualizarCliente(){
-                if (this.validarCliente()){
-                    return;
-                }
-                let me = this;
-                axios.put('/cliente/actualizar',{
-                    'nombre': this.nombre,
-                    'tipo_documento': this.tipo_documento,
-                    'num_documento' : this.num_documento,
-                    'direccion' : this.direccion,
-                    'telefono' : this.telefono,
-                    'email' : this.email,
-                    'id_ciudad' : this.id_ciudad,
-                    'id': this.id_cliente,
-                }).then(function (response) {
-                    me.cerrarModal();
-                    me.listarCliente(1,'','nombre');
-                    me.mensaje("¡Se actualizó correctamente!");
-                }).catch(function (error) {
-                    console.log(error);
-                }); 
-            },            
-            validarCliente(){
-                this.errorCliente=0;
-                this.errorMostrarMsjCliente =[];
-                if (!this.nombre) this.errorMostrarMsjCliente.push("El nombre del Cliente no puede estar vacío.");
-                if (this.errorMostrarMsjCliente.length) this.errorCliente = 1;
-                return this.errorCliente;
-            },
-            abrirModal(accion, data = []) {
-                switch (accion) {
-                    case "guardar":
-                        this.titulo = "Registrar Cliente";
-                        this.accion = 0;
-                        this.limpiar();
-                        break;
-                    case "editar":
-                        this.titulo = "Editar Cliente";
-                        this.accion = 1;
-                        this.id_cliente = data["id"];
-                        this.num_documento = data["num_documento"];
-                        this.nombre = data["nombre"];
-                        this.direccion = data["direccion"];
-                        this.telefono = data["telefono"];
-                        this.email = data["email"];
-                        this.tipo_documento = data["tipo_documento"];
-                        this.id_ciudad = data["id_ciudad"];
-                        break;
-                    default:
-                        break;
-                }
-                this.modal = 1;
-            },
-            cerrarModal() {
-                this.modal = 0;
-                this.titulo='';
-                this.nombre='';
-                this.tipo_documento='DNI';
-                this.num_documento='';
-                this.direccion='';
-                this.telefono='';
-                this.email='';
-                this.id_ciudad=0,
-                this.errorCliente=0;
-            },
-            limpiar() {
-                this.nombre = "";
-                this.id_cliente = "";
-                this.num_documento = "";
-                this.apellidos = "";
-                this.direccion = "";
-                this.telefono = "";
-                this.email = "";
-                this.tipo_documento = "";
-                this.id_ciudad = "";
-            },
-            mensaje(msj) {
-                Swal.fire({
-                    position: "center",
-                    icon: "success",
-                    title: msj,
-                    showConfirmButton: false,
-                    timer: 2000
-                });
+        registrarCliente(){
+            if (this.validarCliente()){
+                return;
             }
+            
+            let me = this;
+            axios.post('/cliente/registrar',{
+                'nombre': this.nombre,
+                'tipo_documento': this.tipo_documento,
+                'num_documento' : this.num_documento,
+                'direccion' : this.direccion,
+                'telefono' : this.telefono,
+                'email' : this.email,
+                'id_ciudad' : this.id_ciudad,
+            }).then(function (response) {
+                me.cerrarModal();
+                me.listarCliente(1,'','nombre');
+                me.mensaje("¡Se registró correctamente!");
+            }).catch(function (error) {
+                console.log(error);
+            });
         },
+        actualizarCliente(){
+            if (this.validarCliente()){
+                return;
+            }
+            let me = this;
+            axios.put('/cliente/actualizar',{
+                'nombre': this.nombre,
+                'tipo_documento': this.tipo_documento,
+                'num_documento' : this.num_documento,
+                'direccion' : this.direccion,
+                'telefono' : this.telefono,
+                'email' : this.email,
+                'id_ciudad' : this.id_ciudad,
+                'id': this.id_cliente,
+            }).then(function (response) {
+                me.cerrarModal();
+                me.listarCliente(1,'','nombre');
+                me.mensaje("¡Se actualizó correctamente!");
+            }).catch(function (error) {
+                console.log(error);
+            }); 
+        },
+        eliminarCliente(data = []) {
+        let me = this;
+        Swal.fire({
+            title: "¿Estás seguro?",
+            text: "¡No podrás revertir esto!",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            cancelButtonText: "¡No, cancélalo!",
+            confirmButtonText: "¡Si, bórralo!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var url = "/cliente/eliminar";
+                axios
+                    .post(url, {
+                        id: data["id"],
+                    })
+                    .then(function (response) {
+                        me.listarCliente(1, '', 'nombre');
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+                Swal.fire("¡Eliminado!", "El registro ha sido eliminado.", "success");
+            }
+        });
+        },            
+        validarCliente(){
+            this.errorCliente=0;
+            this.errorMostrarMsjCliente =[];
+            if (!this.nombre) this.errorMostrarMsjCliente.push("El nombre del Cliente no puede estar vacío.");
+            if (this.errorMostrarMsjCliente.length) this.errorCliente = 1;
+            return this.errorCliente;
+        },
+        abrirModal(accion, data = []) {
+            switch (accion) {
+                case "guardar":
+                    this.titulo = "Registrar Cliente";
+                    this.accion = 0;
+                    this.nombre= "";
+                    this.tipo_documento="";
+                    this.num_documento="";
+                    this.direccion="";
+                    this.telefono="";
+                    this.email="";
+                    this.usuario="";
+                    this.password="";
+                    this.id_rol=0;
+                    this.id_ciudad=0;
+                    this.limpiar();
+                    break;
+                case "editar":
+                    this.titulo = "Editar Cliente";
+                    this.accion = 1;
+                    this.id_cliente = data["id"];
+                    this.num_documento = data["num_documento"];
+                    this.nombre = data["nombre"];
+                    this.direccion = data["direccion"];
+                    this.telefono = data["telefono"];
+                    this.email = data["email"];
+                    this.tipo_documento = data["tipo_documento"];
+                    this.id_ciudad = data["id_ciudad"];
+                    break;
+                default:
+                    break;
+            }
+            this.modal = 1;
+        },
+        cerrarModal() {
+            this.modal = 0;
+            this.titulo='';
+            this.nombre='';
+            this.tipo_documento='DNI';
+            this.num_documento='';
+            this.direccion='';
+            this.telefono='';
+            this.email='';
+            this.id_ciudad=0,
+            this.errorCliente=0;
+        },
+        limpiar() {
+            this.nombre = "";
+            this.id_cliente = "";
+            this.num_documento = "";
+            this.apellidos = "";
+            this.direccion = "";
+            this.telefono = "";
+            this.email = "";
+            this.tipo_documento = "";
+            this.id_ciudad = "";
+        },
+        mensaje(msj) {
+            Swal.fire({
+                position: "center",
+                icon: "success",
+                title: msj,
+                showConfirmButton: false,
+                timer: 2000
+            });
+        }
+    },
     computed: {
         isActived: function () {
             return this.pagination.current_page;

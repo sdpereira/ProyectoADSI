@@ -9,16 +9,16 @@ class RolesController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$request->ajax()) return redirect('/');
+        // if (!$request->ajax()) return redirect('/');
 
         $buscar = $request->buscar;
         $criterio = $request->criterio;
         
         if ($buscar==''){
-            $roles = Roles::orderBy('id', 'desc')->paginate(3);
+            $roles = Roles::orderBy('id', 'asc')->paginate(3);
         }
         else{
-            $roles = Roles::where($criterio, 'like', '%'. $buscar . '%')->orderBy('id', 'desc')->paginate(3);
+            $roles = Roles::where($criterio, 'like', '%'. $buscar . '%')->orderBy('id', 'asc')->paginate(3);
         }
         
 
@@ -39,7 +39,6 @@ class RolesController extends Controller
         $roles = Roles::where('condicion', '=', '1')
         ->select('id','nombre')
         ->orderBy('nombre', 'asc')->get();
-
         return ['roles' => $roles];
     } 
 }

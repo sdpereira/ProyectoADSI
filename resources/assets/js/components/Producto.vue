@@ -10,7 +10,7 @@
         <div class="card">
             <div class="card-header">
                 <i class="fa fa-book"></i> Productos
-                <button type="button" class="btn btn-primary" data-toggle="modal" @click="abrirModal('producto', 'registrar')">
+                <button type="button" class="btn btn-dark" data-toggle="modal" @click="abrirModal('producto', 'registrar')">
                     <i class="icon-plus"></i>&nbsp;Agregar
                 </button>
             </div>
@@ -21,8 +21,8 @@
                             <select class="form-control col-md-3" v-model="criterio">
                                 <option value="nombre">Producto</option>
                             </select>
-                            <input type="text" @keyup.enter="ListarProducto(1, buscar, criterio)" v-model="buscar" class="form-control" placeholder="Buscar texto" />
-                            <button type="submit" @click="ListarProducto(1, buscar, criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+                            <input type="text" @keyup.enter="listarProducto(1, buscar, criterio)" v-model="buscar" class="form-control" placeholder="Buscar texto" />
+                            <button type="submit" @click="listarProducto(1, buscar, criterio)" class="btn btn-dark"><i class="fa fa-search"></i> Buscar</button>
                         </div>
                     </div>
                 </div>
@@ -47,17 +47,35 @@
                             <td v-text="producto.precio_venta"></td>
                             <td v-text="producto.stock"></td>
                             <td v-text="producto.nomMr"></td>
-                        
+                            <td>
+                                <div v-if="producto.condicion">
+                                    <span class="badge badge-success">Activo</span>
+                                </div>
+                                <div v-else>
+                                    <span class="badge badge-danger">Desactivado</span>
+                                </div>
+                            </td>
                             <td>
                                 <button type="button" class="btn btn-warning btn-sm" @click="abrirModal('producto', 'actualizar', producto)"><i class="fa fa-edit"></i></button>
                                 &nbsp;
-                                <button type="button" class="btn btn-danger btn-sm" @click="EliminarProducto(producto)"><i class="icon-trash"></i></button>
+                                <button type="button" class="btn btn-danger btn-sm" @click="eliminarProducto(producto)"><i class="icon-trash"></i></button>
+                                &nbsp;
+                                <template v-if="producto.condicion">
+                                    <button type="button" class="btn btn-dark btn-sm" @click="desactivarProducto(producto.id)">
+                                        <i class="fa fa-ban"></i>
+                                    </button>
+                                </template>
+                                <template v-else>
+                                    <button type="button" class="btn btn-info btn-sm" @click="activarProducto(producto.id)">
+                                        <i class="icon-check"></i>
+                                    </button>
+                                </template>
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 <nav>
-                    <ul class="pagination">
+                   <ul class="pagination justify-content-center">
                         <li class="page-item" v-if="pagination.current_page > 1">
                             <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1, buscar, criterio)">Anterior</a>
                         </li>
@@ -75,7 +93,7 @@
     </div>
     <!--Inicio del modal agregar/actualizar-->
     <div class="modal fade" :class="{ mostrar: modal }" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: none" aria-hidden="true">
-        <div class="modal-dialog modal-primary modal-lg" role="document">
+        <div class="modal-dialog modal-dark modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" v-text="titulo"></h4>
@@ -137,9 +155,9 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @click="cerrarModal()" ><i class="fa fa-times fa-2x"></i> Cerrar</button>
-                    <button type="button" class="btn btn-primary" @click="registrarProducto()" v-if="accion == 1" ><i class="fa fa-save fa"></i> Guardar</button>
-                    <button type="button" class="btn btn-primary" @click="actualizarProducto()" v-if="accion == 2" ><i class="fa fa-save fa"></i> Actualizar</button>
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal()" > Cerrar</button>
+                    <button type="button" class="btn btn-dark" @click="registrarProducto()" v-if="accion == 1"> Guardar</button>
+                    <button type="button" class="btn btn-dark" @click="actualizarProducto()" v-if="accion == 2"> Actualizar</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -147,6 +165,33 @@
         <!-- /.modal-dialog -->
     </div>
     <!--Fin del modal-->
+    <!-- Inicio del modal Eliminar -->
+    <div class="modal fade" id="modalEliminar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: none" aria-hidden="true">
+        <div class="modal-dialog modal-danger" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Eliminar Producto</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de eliminar el registro?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Cerrar
+                    </button>
+                    <button type="button" @click="eliminarProducto" class="btn btn-danger">
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- Fin del modal Eliminar -->
 </main>
 </template>
 
@@ -206,7 +251,6 @@ export default {
         if (to >= this.pagination.last_page) {
             to = this.pagination.last_page;
         }
-
         var pagesArray = [];
         while (from <= to) {
             pagesArray.push(from);
@@ -216,7 +260,7 @@ export default {
         },
     },
     methods: {
-        ListarProducto(page, buscar, criterio) {
+        listarProducto(page, buscar, criterio) {
             let me = this;
             var url = "/producto?page=" + page + "&buscar=" + buscar + "&criterio=" + criterio;
             axios
@@ -260,7 +304,7 @@ export default {
             let me = this;
             //Actualiza  la pagina actual
             me.pagination.current_page = page;
-            me.ListarProducto(page, buscar, criterio);
+            me.listarProducto(page, buscar, criterio);
         },
         registrarProducto() {
             if (this.validarProducto()) {
@@ -277,7 +321,7 @@ export default {
                     'precio_venta': this.precio_venta,
                 })
                 .then(function (response) {
-                    me.ListarProducto(1, "", "nombre");
+                    me.listarProducto(1, "", "nombre");
                     me.mensaje("¡Se guardó correctamente!");
                     me.cerrarModal();
                 })
@@ -302,7 +346,7 @@ export default {
                     'id':this.id_producto
             })
             .then(function (response) {
-                me.ListarProducto(1, "", "nombre");
+                me.listarProducto(1, "", "nombre");
                 me.cerrarModal();
                 me.mensaje("¡Se guardó correctamente!");
             })
@@ -310,12 +354,11 @@ export default {
                 console.log(error);
             });
         },
-        EliminarProducto(data = []) {
+        eliminarProducto(data = []) {
         let me = this;
         Swal.fire({
             title: "¿Estás seguro?",
             text: "¡No podrás revertir esto!",
-            icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
@@ -329,7 +372,7 @@ export default {
                         id: data["id"]
                     })
                     .then(function (response) {
-                        me.ListarProducto();
+                        me.listarProducto(1, '', 'nombre');
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -341,6 +384,71 @@ export default {
                 }
             })
         },
+        desactivarProducto(id){
+            swal({  
+                title: '¿Está seguro de desactivar esta producto?',
+                type: 'warning',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar',
+                // buttonsStyling: false,
+                reverseButtons: true,
+                
+                }).then((result) => {
+                if (result.value) {
+                    let me = this;
+                    axios.put('/producto/desactivar',{
+                        'id': id
+                    }).then(function (response) {
+                        me.listarProducto(1,'','nombre');
+                        swal(
+                        '¡Desactivado!',
+                        'El registro ha sido desactivado con éxito.',
+                        'success'
+                        )
+                    }).catch(function (error) {
+                        console.log(error);
+                    });    
+                } else if (
+                    // Read more about handling dismissals
+                    result.dismiss === swal.DismissReason.cancel
+                ) {
+                }
+                }) 
+            },
+            activarProducto(id){
+            swal({
+                title: 'Esta seguro de activar esta categoría?',
+                type: 'warning',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar',
+                // buttonsStyling: false,
+                reverseButtons: true
+                }).then((result) => {
+                if (result.value) {
+                    let me = this;
+                    axios.put('/producto/activar',{
+                        'id': id
+                    }).then(function (response) {
+                        me.listarProducto(1,'','nombre');
+                        swal(
+                        '¡Activado!',
+                        'El registro ha sido activado con éxito.',
+                        'success'
+                        )
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                } else if (
+                    // Read more about handling dismissals
+                    result.dismiss === swal.DismissReason.cancel
+                ) {
+                }
+                }) 
+            },
         validarProducto() {
             this.errorProducto = 0;
             this.errorMostrarMsjProducto = [];
@@ -420,7 +528,7 @@ export default {
             console.log("Component mounted.");
             this.selectMarca();
             this.selectCategoria();
-            this.ListarProducto(1, this.buscar, this.criterio);
+            this.listarProducto(1, this.buscar, this.criterio);
         },
         
 };

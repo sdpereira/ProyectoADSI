@@ -11,14 +11,11 @@ class MarcasController extends Controller
 
         $buscar= $request->buscar;
         $criterio= $request->criterio;
-
         if($buscar==''){
             $marcas= Marcas::orderBy('id','desc')->paginate(3);
-
         } else{
             $marcas= Marcas::where($criterio,'like','%'.$buscar.'%')->orderBy('id','desc')->paginate(3);
         }
-
         return[
 
             'pagination' => [
@@ -29,9 +26,7 @@ class MarcasController extends Controller
             'from'             => $marcas->firstItem(),
             'to'               => $marcas->lastItem(),
             ],
-
             'marcas' =>$marcas
-
         ];
     }
 
@@ -73,5 +68,10 @@ class MarcasController extends Controller
         $marcas = Marcas::findOrFail($request->id);
         $marcas->condicion = '1';
         $marcas->save();
+    }
+    public function destroy(Request $request)
+    {
+        $marcas = Marcas::findOrFail($request->id);
+        $marcas->delete();
     }
 }

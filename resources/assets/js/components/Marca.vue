@@ -23,7 +23,7 @@
                                         <option value="nombre">Nombre</option>
                                     </select>
                                     <input type="text" v-model="buscar" @keyup.enter="listarMarca(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
-                                    <button type="submit" @click="listarMarca(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+                                    <button type="submit" @click="listarMarca(1,buscar,criterio)" class="btn btn-dark"><i class="fa fa-search"></i> Buscar</button>
                                 </div>
                             </div>
                         </div>
@@ -49,11 +49,14 @@
                                     </td>
                                     <td>
                                         <button type="button" @click="abrirModal('marca','actualizar',marca)" class="btn btn-warning btn-sm">
-                                          <i class="icon-pencil"></i>
-                                        </button> &nbsp;
+                                        <i class="icon-pencil"></i>
+                                        </button>&nbsp;
+                                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" @click="eliminarMarca(marca)">
+                                        <i class="icon-trash"></i>
+                                        </button>&nbsp;
                                         <template v-if="marca.condicion">
-                                            <button type="button" class="btn btn-danger btn-sm" @click="desactivarMarca(marca.id)">
-                                                <i class="icon-trash"></i>
+                                            <button type="button" class="btn btn-dark btn-sm" @click="desactivarMarca(marca.id)">
+                                                <i class="fa fa-ban"></i>
                                             </button>
                                         </template>
                                         <template v-else>
@@ -84,7 +87,7 @@
             </div>
             <!--Inicio del modal agregar/actualizar-->
             <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-                <div class="modal-dialog modal-primary modal-lg" role="document">
+                <div class="modal-dialog modal-dark modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" v-text="titulo"></h4>
@@ -104,25 +107,49 @@
                                 <div v-show="errorMarca" class="form-group row div-error">
                                     <div class="text-center text-error">
                                         <div v-for="error in errorMostrarMsjMarca" :key="error" v-text="error">
-
                                         </div>
                                     </div>
                                 </div>
-
                             </form>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-                            <button type="button" v-if="accion==1" class="btn btn-primary" @click="registrarMarca()">Guardar</button>
-                            <button type="button" v-if="accion==2" class="btn btn-primary" @click="actualizarMarca()">Actualizar</button>
+                            <button type="button" v-if="accion==1" class="btn btn-dark" @click="registrarMarca()">Guardar</button>
+                            <button type="button" v-if="accion==2" class="btn btn-dark" @click="actualizarMarca()">Actualizar</button>
                         </div>
                     </div>
                     <!-- /.modal-content -->
                 </div>
                 <!-- /.modal-dialog -->
-            </div>
-            <!--Fin del modal-->
-        </main>
+                </div>
+                <!-- Inicio del modal Eliminar -->
+                    <div class="modal fade" id="modalEliminar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: none" aria-hidden="true">
+                        <div class="modal-dialog modal-danger" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Eliminar Marca</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>¿Estás seguro de eliminaar el registro?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                        Cerrar
+                                    </button>
+                                    <button type="button" @click="eliminarMarca" class="btn btn-danger">
+                                        Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- Fin del modal Eliminar -->
+    </main>
 </template>
 
 <script>
@@ -208,7 +235,7 @@
             },
             desactivarMarca(id){
             swal({  
-                title: '¿Está seguro de desactivar esta categoría?',
+                title: '¿Está seguro de desactivar esta marca?',
                 type: 'warning',
                 icon: 'warning',
                 showCancelButton: true,
@@ -225,7 +252,7 @@
                     }).then(function (response) {
                         me.listarMarca(1,'','nombre');
                         swal(
-                        'Desactivado!',
+                        '¡Desactivado!',
                         'El registro ha sido desactivado con éxito.',
                         'success'
                         )
@@ -242,7 +269,6 @@
             activarMarca(id){
             swal({
                 title: 'Esta seguro de activar esta categoría?',
-                
                 type: 'warning',
                 icon: 'warning',
                 showCancelButton: true,
@@ -253,13 +279,12 @@
                 }).then((result) => {
                 if (result.value) {
                     let me = this;
-
                     axios.put('/marca/activar',{
                         'id': id
                     }).then(function (response) {
                         me.listarMarca(1,'','nombre');
                         swal(
-                        'Activado!',
+                        '¡Activado!',
                         'El registro ha sido activado con éxito.',
                         'success'
                         )
@@ -273,6 +298,33 @@
                 }
                 }) 
             },
+            eliminarMarca(data = []) {
+            let me = this;
+            Swal.fire({
+                title: "¿Estás seguro?",
+                text: "¡No podrás revertir esto!",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                cancelButtonText: "¡No, cancélalo!",
+                confirmButtonText: "¡Si, bórralo!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var url = "/marca/eliminar";
+                    axios
+                        .post(url, {
+                            id: data["id"],
+                        })
+                        .then(function (response) {
+                            me.listarMarca(1, '', 'nombre');
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                    Swal.fire("¡Eliminado!", "El registro ha sido eliminado.", "success");
+                }
+            });
+        }, 
             validarMarca(){
                 this.errorMarca=0;
                 this.errorMostrarMsjMarca =[];
@@ -305,7 +357,7 @@
                             case 'registrar':
                             {
                                 this.modal = 1;
-                                this.titulo = 'Registrar Categoría';
+                                this.titulo = 'Registrar Marca';
                                 this.nombre= '';
                                 this.accion = 1;
                                 break;
@@ -314,7 +366,7 @@
                             {
                                 //console.log(data);
                                 this.modal=1;
-                                this.titulo='Actualizar categoría';
+                                this.titulo='Actualizar Marca';
                                 this.accion=2;
                                 this.id_marca=data['id'];
                                 this.nombre = data['nombre'];
