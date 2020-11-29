@@ -5,7 +5,7 @@
                 <a class="nav-link active" href="#"><i class="icon-speedometer"></i> Escritorio</a>
             </li>
             <li class="nav-title">
-                MENÚ
+                <i class="icon-home"></i> MENÚ
             </li>
             <li class="nav-item nav-dropdown">
                 <a class="nav-link nav-dropdown-toggle" href="#"><i class="icon-bag"></i> General</a>
@@ -17,22 +17,14 @@
                         <a class="nav-link" href="#"><i class="fa fa-map-marker fa-2x"></i> Ciudades</a>
                     </li>
                     <li @click="menu=2" class="nav-item">
-                        <a class="nav-link" href="#"><i class="fa fa-group fa-2x"></i>Clientes</a>
+                        <a class="nav-link" href="#"><i class="icon-people"></i>Clientes</a>
                     </li>
                     <li @click="menu=3" class="nav-item">
-                        <a class="nav-link" href="#"><i class="	fa fa-map-signs fa-2x"></i>Departamentos</a>
+                        {{-- <a class="nav-link" href="#"><i class="	fa fa-map-signs fa-2x"></i>Departamentos</a> --}}
                     </li>
-                    <li @click="menu=4" class="nav-item">
-                        <a class="nav-link" href="#"><i class="fa fa-child fa-2x"></i>Usuarios</a>
-                    </li>
-                    <li @click="menu=5" class="nav-item">
-                        <a class="nav-link" href="#"><i class="fa fa-cart-plus fa-2x"></i>Entradas</a>
-                    </li>
-                    <li @click="menu=6" class="nav-item">
-                        <a class="nav-link" href="#"><i class="fa fa-line-chart fa-2x"></i> Facturas</a>
-                    </li>
+
                     <li @click="menu=7" class="nav-item">
-                        <a class="nav-link" href="#"><i class="fa fa-tag fa-2x"></i> Marcas</a>
+                        <a class="nav-link" href="#"><i class="fa fa-tag"></i> Marcas</a>
                     </li>
                     <li @click="menu=8" class="nav-item">
                         <a class="nav-link" href="#"><i class="	fa fa-cubes fa-2x"></i> Productos</a>
@@ -45,7 +37,29 @@
                     </li>
                 </ul>
             </li>
-            
+            <li class="nav-item nav-dropdown">
+                <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-user-plus"></i> Acceso</a>
+                <ul class="nav-dropdown-items">
+                    <li @click="menu=4" class="nav-item">
+                        <a class="nav-link" href="#"><i class="fa fa-user-circle"></i>Usuarios</a>
+                    </li>
+                    <li @click="menu=5" class="nav-item">
+                        <a class="nav-link" href="#"><i class="fa fa-group"></i>Roles</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item nav-dropdown">
+                <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-line-chart"></i> Facturas</a>
+                <ul class="nav-dropdown-items">
+                    <li @click="menu=6" class="nav-item">
+                        <a class="nav-link" href="#"><i class="fa fa-cart-arrow-down"></i> Ventas</a>
+                    </li>
+                    {{-- <li @click="menu=6" class="nav-item">
+                        <a class="nav-link" href="#"><i class="fa fa-cart-plus"></i> Ventas</a>
+                    </li> --}}
+                </ul>
+            </li>
+
         </ul>
     </nav>
     <button class="sidebar-minimizer brand-minimizer" type="button"></button>

@@ -16,10 +16,10 @@
         <usuario></usuario>
     </template>
     <template v-if="menu==5">
-        <entrada></entrada>
+        <rol></rol>
     </template>
     <template v-if="menu==6">
-        <factura></factura>
+        <ventas></ventas>
     </template>
     <template v-if="menu==7">
         <marca></marca>
